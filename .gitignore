@@ -1,0 +1,67 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pdb
+*.sqlite3
+*.egg-info/
+*.log
+
+# Virtual Environment
+venv/
+.env
+.env.*
+*.env
+
+# FastAPI-related
+instance/
+config.yaml
+
+# Ignore Pytest and coverage reports
+.cache/
+pytest_cache/
+.coverage
+htmlcov/
+.coverage.*
+
+# Jupyter Notebook Checkpoints (if using .ipynb files)
+.ipynb_checkpoints
+
+# Byte-compiled / optimized / DLL files
+*.pyc
+*.pyo
+*.pyd
+__pycache__/
+
+# VSCode or other IDE/editor config files
+.vscode/
+.idea/
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Docker
+docker-compose.yml
+Dockerfile
+*.dockerignore
+
+# Ignore any environment variable files
+.env
+.env.dev
+.env.prod
+
+# Node (if using a frontend in the same project)
+node_modules/
+
+# Test-related
+*.pytest_cache/
+__testcache__/
+
+# Build files
+dist/
+build/
+
+# Azure-specific (if deploying on Azure with Azure CLI)
+azure-pipelines.yml
