@@ -51,3 +51,4 @@ def chatbot_pipeline(knowledge_base_directory, question):
                                        retriever=vectordb.as_retriever(),
                                        return_source_documents=True,
                                        chain_type_kwargs={"prompt": QA_CHAIN_PROMPT})
+    return qa_chain({"query": question})["result"]

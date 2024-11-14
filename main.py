@@ -9,6 +9,7 @@ from typing import List
 from chatbot import chatbot_pipeline
 import os
 
+
 load_dotenv()
 
 database = getDatabase()
@@ -151,7 +152,8 @@ async def add_skill(skill: Skill):
 @app.post("/chat")
 async def chat(request: ChatRequest):
     question = request.message
-    response = chatbot_pipeline("./new_knowledge_base", question)
+    response = chatbot_pipeline("./new_knowledge_base.pdf", question)
+    print(response)
     return {"response": response}
 
 
