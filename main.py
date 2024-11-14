@@ -6,6 +6,7 @@ from dotenv import load_dotenv
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import List
+from chatbot import chatbot_pipeline
 import os
 
 load_dotenv()
@@ -24,7 +25,7 @@ blob_service_client = BlobServiceClient.from_connection_string(azure_connection_
 container_name = "images"
 container_client = blob_service_client.get_container_client(container_name)
 
-
+#pydantic models
 class Project(BaseModel):
     name: str
     description: str
@@ -35,6 +36,9 @@ class Skill(BaseModel):
     skillURL: str
     category: str
 
+class ChatRequest(BaseModel):
+    message: str    
+
 
 app = FastAPI()
 
@@ -42,7 +46,7 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173/"],  
+    allow_origins=["http://localhost:5173"],  
     allow_credentials=True,
     allow_methods=["*"],  
     allow_headers=["*"]
@@ -94,30 +98,33 @@ async def create_project(
 
 #skills routes
 @app.get("/programming_skills")
-async def get_projects():
+async def get_programming_skills():
     programming_skills = []
-    programming_skill["_id"] = str(programming_skill["_id"])
+    
     async for programming_skill in programming_skills_collection.find():
+        programming_skill["_id"] = str(programming_skill["_id"])
         programming_skills.append(programming_skill)
         print(programming_skills)
     return programming_skills
 
 
 @app.get("/web")
-async def get_projects():
+async def get_web_skills():
     web_skills = []
-    web_skill["_id"] = str(web_skill["_id"])
+    
     async for web_skill in web_skills_collection.find():
+        web_skill["_id"] = str(web_skill["_id"])
         web_skills.append(web_skill)
         print(web_skills)
     return web_skills    
 
 
 @app.get("/ml")
-async def get_projects():
+async def get_ml_skills():
     ml_skills = []
-    ml_skill["_id"] = str(ml_skill["_id"])
+    
     async for ml_skill in machine_learning_skills_collection.find():
+        ml_skill["_id"] = str(ml_skill["_id"])
         ml_skills.append(ml_skill)
         print(ml_skills)
     return ml_skills   
@@ -138,6 +145,15 @@ async def add_skill(skill: Skill):
 
     await collection.insert_one(skill.dict())
     return {"message": "Skill added successfully!"}
+
+
+#chatbot routes
+@app.post("/chat")
+async def chat(request: ChatRequest):
+    question = request.message
+    response = chatbot_pipeline("./new_knowledge_base", question)
+    return {"response": response}
+
 
 
 
