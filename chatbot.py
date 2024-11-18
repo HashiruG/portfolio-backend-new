@@ -30,20 +30,18 @@ def chatbot_pipeline(knowledge_base_directory, question):
     pages = loader.load()
 
     splits = r_splitter.split_documents(pages)
-    print("splits done \n")
-    print(splits)
+
 
     vectordb = Chroma.from_documents(
     documents=splits,
     embedding=embeddings,
     persist_directory="./db/chroma")
 
-
     memory = ConversationBufferMemory(
     memory_key="chat_history",
     return_messages=True)
     
-    template = """Use the following pieces of context to answer the question at the end. Basically questions should be about an undergraduate individual of university of Moratuwa Srilanka. If you don't know the answer, just say that you don't know, don't try to make up an answer.Always say "thanks for asking!" at the end of the answer.
+    template = """Use the following pieces of context to answer the question at the end.Use the provided context to answer the question as accurately as possible. If you don't know the answer, just say that you don't know, don't try to make up an answer.Context is mostly about a second year IT undergraduate at University of Moratuwa, Srilanka, whoose name Hashiru Gunathilake.So Answer for the questions as Hashiru Gunathilake.Always say "thanks for asking!" at the end of the answer.
     {context}
     Question: {question}
     Helpful Answer:"""
