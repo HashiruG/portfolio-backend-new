@@ -24,17 +24,21 @@ r_splitter = RecursiveCharacterTextSplitter(chunk_size=100,chunk_overlap=0,separ
 def chatbot_pipeline(knowledge_base_directory, question):
 
     question = question
+    
 
     loader = PyPDFLoader(knowledge_base_directory)
     pages = loader.load()
 
     splits = r_splitter.split_documents(pages)
+    print("splits done \n")
+    print(splits)
 
     vectordb = Chroma.from_documents(
     documents=splits,
     embedding=embeddings,
-    persist_directory="/db/chroma")
-    
+    persist_directory="./db/chroma")
+
+
     memory = ConversationBufferMemory(
     memory_key="chat_history",
     return_messages=True)
@@ -43,7 +47,7 @@ def chatbot_pipeline(knowledge_base_directory, question):
     {context}
     Question: {question}
     Helpful Answer:"""
-    QA_CHAIN_PROMPT = PromptTemplate(input_variables=["context", "question"],template=template,)
+    QA_CHAIN_PROMPT = PromptTemplate(input_variables=["context", "question"],template=template)
 
 
     
@@ -51,4 +55,6 @@ def chatbot_pipeline(knowledge_base_directory, question):
                                        retriever=vectordb.as_retriever(),
                                        return_source_documents=True,
                                        chain_type_kwargs={"prompt": QA_CHAIN_PROMPT})
+    
+    
     return qa_chain({"query": question})["result"]
