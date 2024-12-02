@@ -152,7 +152,7 @@ async def add_skill(skill: Skill):
 @app.post("/chat")
 async def chat(request: ChatRequest):
     question = request.message
-    response = chatbot_pipeline("./new_knowledge_base.pdf", question)
+    response = chatbot_pipeline("./data/", question)
     print(response)
     return {"response": response}
 

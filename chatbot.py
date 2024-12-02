@@ -1,9 +1,9 @@
-from langchain_community.document_loaders import PyPDFLoader
+from PyPDF2 import PdfReader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain.vectorstores import FAISS
 import google.generativeai as genai
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
-from langchain_community.vectorstores import Chroma
 from langchain.memory import ConversationBufferMemory
 from langchain.chains import RetrievalQA
 from langchain.prompts import PromptTemplate
@@ -19,23 +19,22 @@ llm = ChatGoogleGenerativeAI(model="gemini-1.5-flash",api_key=GOOGLE_API_KEY)
 
 embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001",google_api_key=GOOGLE_API_KEY)
 
-r_splitter = RecursiveCharacterTextSplitter(chunk_size=100,chunk_overlap=0,separators=["\n \n"])
+text_splitter=RecursiveCharacterTextSplitter(chunk_size=100,chunk_overlap=0,separators=["\n \n"])
 
 def chatbot_pipeline(knowledge_base_directory, question):
 
     question = question
-    
 
-    loader = PyPDFLoader(knowledge_base_directory)
-    pages = loader.load()
+    pdf_docs = [os.path.join(knowledge_base_directory, pdf) for pdf in os.listdir(knowledge_base_directory)]
+    text = ""
+    for pdf in pdf_docs:
+        pdf_reader = PdfReader(pdf)
+        for page in pdf_reader.pages:
+            text += page.extract_text()
 
-    splits = r_splitter.split_documents(pages)
+    splits = text_splitter.split_text(text)
 
-
-    vectordb = Chroma.from_documents(
-    documents=splits,
-    embedding=embeddings,
-    persist_directory="./db/chroma")
+    vectordb=FAISS.from_texts(texts=splits,embedding=embeddings)
 
     memory = ConversationBufferMemory(
     memory_key="chat_history",
