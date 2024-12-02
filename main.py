@@ -31,6 +31,7 @@ class Project(BaseModel):
     name: str
     description: str
     image_url: str
+    github_link: str
 
 class Skill(BaseModel):
     skillName: str
