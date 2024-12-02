@@ -70,6 +70,7 @@ async def get_projects():
 async def create_project(
     name: str = Form(...),
     description: str = Form(...),
+    github_link: str = Form(...),
     image: UploadFile = File(...)
 ):
 
@@ -89,6 +90,7 @@ async def create_project(
             "name": name,
             "description": description,
             "image_url": f"https://portimagesforweb.blob.core.windows.net/{container_name}/{image.filename}",
+            "github_link": github_link
         }
         await project_collection.insert_one(project)
 
